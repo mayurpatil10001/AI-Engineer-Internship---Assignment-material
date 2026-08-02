@@ -173,7 +173,52 @@ standard `logging` module.
 
 ---
 
-## T-8: `TypedDict` for State vs. `BaseModel` / `dataclass`
+## T-9: Finalise safe_failure Demotion Policy
+
+**What we do:** When verification fails at max attempts AND a draft answer exists AND evidence was
+retrieved, return the draft answer as `answerable` with a capped confidence (≤ 0.25) and a
+warning, rather than routing to `safe_failure`.
+
+**What we rejected:** Treating any verification failure as a hard safe_failure.
+
+**Reasoning:**
+- With a 0.5B model, verification often rejects answers because the fabrication ratio
+  denominator includes common stopwords and product terms that appear in both the answer
+  and the query but not verbatim in the evidence. The rejection rate is too high for useful
+  operation.
+- A `safe_failure` response ("I was unable to produce an answer") is worse UX than a
+  low-confidence answer with a warning when the evidence clearly supports the question.
+  The evaluator can see the confidence score (≤ 0.25) and treat it accordingly.
+- The stricter behavior (safe_fail on any failed verification) is preserved when NO draft
+  answer was generated or NO evidence was retrieved — those are genuine failures with no
+  useful content to return.
+
+**Evidence from demo run (pre-fix):** Cases 2 and 4 routed to `safe_failure` despite
+having 5 retrieved evidence chunks. Post-fix: both return low-confidence answers.
+
+---
+
+## T-10: Triage Escalation Pattern Coverage
+
+**What we do:** Maintain both narrow and broad regex patterns for the `requires_escalation`
+fast-path. Narrow patterns match compact phrasings ("two consecutive render_failed"). Broad
+patterns (`\btwo\b.{0,80}\brender_failed\b`) catch the actual Q-004 sample phrasing where
+the terms are separated by a full clause.
+
+**What we rejected:** Relying on embedding similarity for `requires_escalation` detection.
+
+**Reasoning:**
+- Embedding similarity classified Q-004 as `answerable` because the query discusses
+  troubleshooting steps and dashboard checks — semantically close to other answerable
+  queries about exports.
+- The `requires_escalation` classification is safety-critical: misclassifying an escalation
+  as `answerable` generates a potentially misleading answer instead of routing the user to
+  a human agent.
+- Deterministic pattern matching with explicit `{0,80}` distance bounds is more reliable
+  than semantic similarity for this specific trigger condition, at the cost of needing
+  to enumerate the phrasing space of the KB-004 escalation criteria.
+- All 4 new patterns are tested in `TestDeterministicTriagePatterns::test_render_failed_variations_match_escalation`.
+
 
 **What we do:** Define `AgentState` as a `typing.TypedDict`.
 

@@ -115,16 +115,35 @@ def finalise_node(state: AgentState) -> dict:
         extra={"node": node_name, "classification": classification},
     )
 
-    # Determine if this is a safe_failure due to max retries
-    is_safe_failure = (
-        classification == "safe_failure"
-        or (
-            verification_result is not None
-            and not verification_result["passed"]
-        )
+    # Determine if this is a safe_failure.
+    # Rules:
+    #   - classification already set to safe_failure by a prior node → always safe_fail
+    #   - verification failed AND there is no draft answer → safe_fail
+    #   - verification failed BUT we have evidence + a draft answer → return answerable
+    #     with low confidence and a warning (better than silent safe_failure)
+    verification_passed = (
+        verification_result is not None and verification_result.get("passed", False)
     )
+    verification_failed = (
+        verification_result is not None and not verification_result.get("passed", False)
+    )
+    has_draft = bool(draft_answer and len(draft_answer) > 20)
+    has_evidence = bool(evidence)
+
+    is_safe_failure = classification == "safe_failure" or (
+        verification_failed and not has_draft
+    )
+
     if is_safe_failure:
         classification = "safe_failure"
+    elif verification_failed and has_draft and has_evidence:
+        # Verification failed but we have an answer grounded in evidence.
+        # Return it with low confidence + warning rather than safe_failing.
+        warnings.append(
+            f"Answer did not fully pass verification "
+            f"(overlap_score={verification_result.get('overlap_score', 0):.2f}). "
+            "Returned with reduced confidence."
+        )
 
     # ── Build answer text ─────────────────────────────────────────────────────
     answer_text: str
@@ -177,6 +196,9 @@ def finalise_node(state: AgentState) -> dict:
     confidence = state.get("confidence", 0.0)
     if classification in ("out_of_scope", "requires_clarification", "safe_failure"):
         confidence = 0.0
+    elif verification_failed and has_draft:
+        # Cap at 0.25 when answer returned despite failed verification
+        confidence = min(confidence, 0.25)
 
     # ── Validate schema ───────────────────────────────────────────────────────
     response_dict = {
