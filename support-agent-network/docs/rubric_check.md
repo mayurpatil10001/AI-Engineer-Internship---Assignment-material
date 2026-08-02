@@ -96,16 +96,17 @@
 
 | Requirement | Satisfied by | Status |
 |-------------|-------------|--------|
-| Architecture summary | README §Architecture | ⏳ (Phase 9) |
-| AI assistance disclosure | README §AI Assistance Disclosure | ⏳ (Phase 9) |
-| Known limitations | README §Known Limitations; `docs/tradeoffs.md` | ⏳ (Phase 9) |
+| Architecture summary | README §Architecture | ✅ |
+| AI assistance disclosure | README §AI Assistance Disclosure | ✅ |
+| Known limitations | README §Known Limitations; `docs/tradeoffs.md` | ✅ |
 | No secrets in repo | `.gitignore` excludes `.env`; `.env.example` has no values | ✅ |
 | Structured logs per node | `logging_config.py::log_node_entry`; `logs/run_<timestamp>.jsonl` | ✅ |
 
 ## Open Items
 
-- [ ] **README** full content (Phase 9)
-- [ ] **docs/graph_diagram.png** generated (Phase 5 — run `scripts/generate_graph_diagram.py`)
-- [ ] **outputs/** sample JSON files (Phase 8 — run `scripts/run_demo.py`)
-- [ ] **Hardware timing numbers** filled into README from actual measured run
-- [ ] **End-to-end test run** with models (Phase 7 final verification)
+- [x] **README** full content
+- [x] **docs/graph_diagram.png** generated (`scripts/generate_graph_diagram.py`)
+- [x] **outputs/** sample JSON files (`scripts/run_demo.py`)
+- [x] **Hardware timing numbers** filled into README from actual measured run
+- [x] **End-to-end test run** with models verified (5/5 cases pass)
+

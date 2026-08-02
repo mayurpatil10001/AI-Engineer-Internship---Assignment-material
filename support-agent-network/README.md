@@ -145,7 +145,7 @@ Outputs are saved to `outputs/sample_run_*.json`.
 pytest tests/test_routing.py tests/test_verification.py -v
 ```
 
-These 43 tests cover all routing logic and verification checks without loading any model.
+These 47 tests cover all routing logic and verification checks without loading any model.
 
 ### Full end-to-end tests (requires models, ~10–20 min on CPU)
 
