@@ -34,9 +34,14 @@ ENV/
 # Uncomment if you want to gitignore a local model cache inside the project
 # models/
 
-# Logs and run outputs
-logs/
-outputs/*.json
+# Logs and run outputs (ignore general logs but commit sample output deliverables)
+logs/*
+!logs/.gitkeep
+!logs/run_20260802T103458Z.jsonl
+outputs/*
+!outputs/.gitkeep
+!outputs/sample_run_*.json
+
 
 # Test cache
 .pytest_cache/

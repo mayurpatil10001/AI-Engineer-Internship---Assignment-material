@@ -100,15 +100,22 @@ via cosine similarity to hand-written class exemplars. See [`docs/tradeoffs.md �
 
 | Metric | Value |
 |--------|-------|
-| **Hardware** | HP laptop, Intel Core i7, 16 GB RAM, no discrete GPU |
-| **Embedding model load** | ~3.1 s (from local cache after first download) |
-| **Generator model load** | ~5.6 s (from local cache); 319 s on first cold download |
-| **Average generation latency** | 73–142 s per response at 318–512 output tokens (CPU float32) |
-| **Routing-only queries** (out_of_scope, clarification) | < 1 s (no generation) |
-| **Full retrieval + generation pipeline** | ~90–150 s end-to-end on CPU |
-| **73-chunk index build** | ~0.9 s per run |
+| **Hardware** | HP laptop — AMD Ryzen 5 7535HS (6-core), 8 GB RAM, NVIDIA GeForce RTX 2050 (4 GB VRAM) |
+| **Embedding model load** | ~3.94 s (from local HuggingFace cache) |
+| **Generator model load** | ~5.0 s (8-bit quantised, CUDA device) |
+| **Average generation latency** | ~121.7 s/call across 6 calls (127.5, 124.3, 99.2, 126.8, 126.2, 126.1 s) |
+| **Total generation time** | 730.1 s across all 6 generation calls (3 answerable/escalation cases × 2 attempts each) |
+| **Routing-only queries** (out_of_scope, clarification) | < 1 s (no generation invoked) |
+| **73-chunk index build** | ~0.13 s per run (numpy cosine scan) |
+| **5/5 benchmark cases** | All correct classifications on first full run |
 
-> *Timing numbers are filled from `scripts/run_demo.py` output — see `outputs/` for sample runs.*
+> ⚠️ **Note on generation latency:** ~120 s/call for a 0.5B model on an RTX 2050 (even at int8)
+> is unexpectedly high — likely attributable to CPU↔GPU data-transfer overhead with 8-bit
+> quantization on a low-VRAM mobile GPU, rather than true compute cost. With more time this
+> would be the first thing profiled and optimised (GGUF via `llama-cpp-python` or full fp16
+> on a desktop GPU would both likely be faster).
+
+> *Timing numbers sourced from `logs/run_20260802T103458Z.jsonl` — the verified 5/5 run.*
 
 ---
 
@@ -221,27 +228,40 @@ proceeding to the next phase. No file was accepted without understanding its log
 2. **~60 chunk corpus scale assumption.** The linear numpy cosine scan is appropriate for this
    KB size. If the KB grew to >10,000 chunks, FAISS indexing would be necessary.
 
-3. **CPU generation latency.** At 5–15s per response on CPU, the agent is too slow for a live
-   chat interface. A GGUF-quantised model via `llama-cpp-python` would reduce this to 1–3s
-   without GPU.
+3. **High generation latency even on GPU.** At ~120 s/call (8-bit quantized Qwen-0.5B on
+   RTX 2050 CUDA), the agent is too slow for a live chat interface. Likely caused by
+   CPU↔GPU data-transfer overhead with a low-VRAM mobile GPU + int8 quantization — would
+   profile and switch to GGUF/llama-cpp or a desktop GPU for production use.
 
-4. **Embedding-similarity triage accuracy.** For queries that fall outside the four exemplar
+4. **All generation cases required both retry attempts.** In the verified 5/5 demo run,
+   every query that reached generation needed exactly 2 attempts (first-attempt verification
+   pass rate: 0/3 for generation cases). This doubles real per-query wall-clock time versus
+   the best case. The fabrication-ratio threshold may need further calibration or a stronger
+   verification signal (e.g., NLI model) to improve first-pass acceptance rates.
+
+5. **Embedding-similarity triage accuracy.** For queries that fall outside the four exemplar
    classes, accuracy degrades. The deterministic pre-filters handle the highest-stakes cases
    (out_of_scope, vague-sync) but edge cases in the middle may be misclassified.
 
-5. **No cross-query memory.** Each query is processed independently. A real support agent
+6. **No cross-query memory.** Each query is processed independently. A real support agent
    would maintain conversation context across turns.
 
-6. **Generation quality at 0.5B parameters.** The model follows the constrained prompt
+7. **Generation quality at 0.5B parameters.** The model follows the constrained prompt
    reliably but produces less fluent responses than 7B+ models. The verification layer
    partially compensates by catching factually grounded but poorly structured answers.
+
+8. **TensorFlow backend collision.** If a reviewer has TensorFlow installed globally, `transformers`
+   may attempt to load a TF backend, causing `tf_keras`/Keras-3 import errors. This is prevented
+   by `os.environ.setdefault("USE_TF", "0")` at the top of `models.py`. If you hit Keras import
+   errors, also set `USE_TF=0 USE_TORCH=1` in your shell before running.
 
 ---
 
 ## What I'd Improve With More Time
 
-1. **GGUF quantisation via `llama-cpp-python`** — reduce CPU generation latency from ~10s to ~2s
-   without any quality loss on constrained prompts.
+1. **Profile and fix generation latency** — at ~120 s/call even on CUDA, the first priority
+   would be profiling where the bottleneck actually is (quantization overhead, tokenization,
+   memory transfers) and switching to GGUF via `llama-cpp-python` or a fp16 path on a higher-VRAM GPU.
 
 2. **Small NLI model for verification** — replace the trigram overlap heuristic with a
    `cross-encoder/nli-deberta-v3-small` (87MB) paraphrase-entailment check for better

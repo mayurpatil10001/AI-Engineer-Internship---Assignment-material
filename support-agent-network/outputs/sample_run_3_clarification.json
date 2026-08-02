@@ -1,0 +1,17 @@
+{
+  "classification": "requires_clarification",
+  "answer": "To help you effectively, we need a few more details. Please provide the following details so we can diagnose the connection issue: (1) Workspace ID, (2) Connection name or ID, (3) Current connection state (Active / Error / Reauthorization required / Disabled), (4) Time of last successful refresh, (5) Latest error code if shown, (6) Whether both manual and scheduled refreshes are affected. Do not share database passwords, OAuth tokens, or API secrets.",
+  "sources": [],
+  "confidence": 0.0,
+  "requires_human": false,
+  "reason": "Query matches vague-sync pattern '\\bsync\\s+(is\\s+)?not\\s+working\\b'. Per KB-006, the phrase is not specific enough to diagnose. Specific details are required.",
+  "clarifying_question": "Please provide the following details so we can diagnose the connection issue: (1) Workspace ID, (2) Connection name or ID, (3) Current connection state (Active / Error / Reauthorization required / Disabled), (4) Time of last successful refresh, (5) Latest error code if shown, (6) Whether both manual and scheduled refreshes are affected. Do not share database passwords, OAuth tokens, or API secrets.",
+  "escalation_reason": null,
+  "warnings": [],
+  "node_trace": [
+    "triage",
+    "finalise"
+  ],
+  "attempt_count": 0,
+  "wall_clock_s": 0.01
+}

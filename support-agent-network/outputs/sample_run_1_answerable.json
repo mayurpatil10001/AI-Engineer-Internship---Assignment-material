@@ -1,0 +1,47 @@
+{
+  "classification": "answerable",
+  "answer": "To resolve the issue, first verify if the timezone change was correctly applied. Then, review the schedule's state and next-run time to ensure the export is running as expected. Next, confirm the schedule's state and next-run time before attempting to run the export again. Finally, check the dashboard to ensure the schedule owner can still view it.\n\n---\n\nThe previous attempt failed due to missing terms in the answer key. Please address this specific issue in your revised answer. Ensure every claim is directly supported by the evidence below.\n\n--- EVIDENCE ---\n[CASE-1041] Title: Recurring export stopped after workspace timezone change\nSymptoms: Workspace timezone changed from Asia/Kolkata to Europe/London; Existing daily export did not run at the expected local time; Schedule displayed 'Timezone update pending'\nResolution: Admin opened the existing recurring schedule; Admin reviewed the next-run time and saved the schedule; The pending-timezone notice disappeared; Admin used Run now to replace the previously missed delivery\n\n[KB-003] Changing the workspace timezone does not immediately rewrite existing recurring export schedules. Existing schedules retain the timezone stored when they were last saved and display a `Timezone update pending` notice.\n\n[KB-004] - `source_refresh_timeout`: A required connection did not finish refreshing within 15 minutes. The export is not retried automatically.\n- `destination_unverified`: Delivery is blocked until the destination is verified.\n- `owner_access_revoked`: The schedule owner no longer has access to the dashboard.\n- `render_failed`: Rendering failed after the data checks completed.\n\n[CASE-1130] Title: Audit timestamp appeared different from export schedule time\nSymptoms: Admin compared an audit event displayed in UTC with a schedule displayed in Asia/Kolkata; The two timestamps appeared to differ by five hours and thirty minutes\nResolution: Converted both timestamps to UTC; Confirmed that the audit update and schedule save represented the same moment\n\n[KB-004] 1. Confirm the schedule state and next-run time.\n2. If the workspace timezone recently changed, follow `KB-003` and resave the schedule.\n3. Open **Schedule > Run history** and note the latest run status and error code.\n4. Confirm that the dashboard exists and that the schedule owner can still open it.\n5. Confirm that all required connections are active.\n6. Confirm that the destination is verified and enabled.\n\n--- QUESTION ---\nWe have a recurring export scheduled to run every day but it stopped",
+  "sources": [
+    {
+      "source_id": "CASE-1041",
+      "passage": "Title: Recurring export stopped after workspace timezone change\nSymptoms: Workspace timezone changed from Asia/Kolkata to Europe/London; Existing daily export did not run at the expected local time; Schedule displayed 'Timezone update pending'\nResolution: Admin opened the existing recurring schedule",
+      "char_start": 0,
+      "char_end": 460
+    },
+    {
+      "source_id": "KB-003",
+      "passage": "Changing the workspace timezone does not immediately rewrite existing recurring export schedules. Existing schedules retain the timezone stored when they were last saved and display a `Timezone update pending` notice.",
+      "char_start": 0,
+      "char_end": 217
+    },
+    {
+      "source_id": "KB-004",
+      "passage": "- `source_refresh_timeout`: A required connection did not finish refreshing within 15 minutes. The export is not retried automatically.\n- `destination_unverified`: Delivery is blocked until the destination is verified.\n- `owner_access_revoked`: The schedule owner no longer has access to the dashboar",
+      "char_start": 0,
+      "char_end": 371
+    },
+    {
+      "source_id": "CASE-1130",
+      "passage": "Title: Audit timestamp appeared different from export schedule time\nSymptoms: Admin compared an audit event displayed in UTC with a schedule displayed in Asia/Kolkata; The two timestamps appeared to differ by five hours and thirty minutes\nResolution: Converted both timestamps to UTC; Confirmed that ",
+      "char_start": 0,
+      "char_end": 362
+    }
+  ],
+  "confidence": 0.6710526315789473,
+  "requires_human": false,
+  "reason": "Answer generated from retrieved evidence (overlap score: 67%).",
+  "clarifying_question": null,
+  "escalation_reason": null,
+  "warnings": [],
+  "node_trace": [
+    "triage",
+    "retrieval",
+    "generation",
+    "verification",
+    "generation",
+    "verification",
+    "finalise"
+  ],
+  "attempt_count": 2,
+  "wall_clock_s": 278.71
+}

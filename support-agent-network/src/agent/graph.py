@@ -106,14 +106,21 @@ def route_after_verification(
     if state["attempt_count"] >= MAX_ATTEMPTS:
         vr = state.get("verification_result")
         passed = vr is not None and vr.get("passed", False)
-        logger.warning(
-            "route_after_verification: max attempts reached, routing to finalise",
-            extra={
-                "attempt_count": state["attempt_count"],
-                "max": MAX_ATTEMPTS,
-                "verification_passed": passed,
-            },
-        )
+        log_extra = {
+            "attempt_count": state["attempt_count"],
+            "max": MAX_ATTEMPTS,
+            "verification_passed": passed,
+        }
+        if passed:
+            logger.info(
+                "route_after_verification: max attempts reached (verification passed), routing to finalise",
+                extra=log_extra,
+            )
+        else:
+            logger.warning(
+                "route_after_verification: max attempts reached (verification failed), routing to finalise",
+                extra=log_extra,
+            )
         return "finalise"
 
     vr = state.get("verification_result")

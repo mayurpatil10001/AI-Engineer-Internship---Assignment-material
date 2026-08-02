@@ -1,0 +1,49 @@
+{
+  "classification": "requires_escalation",
+  "answer": "To resolve the export failure issues, follow these steps:\n\n1. Verify the connection refresh timeout settings on the dashboard and ensure they meet the requirement of being less than 15 minutes.\n2. Check if there are any errors or warnings related to the export process, such as connector internal errors or credentials exposed during the export.\n3. Confirm that the scheduled refresh interval for the dashboard is set correctly and that it hasn't expired.\n4. Investigate any billing actions, ownership disputes, or legal requests that may be causing the export failures.\n5. Adjust the refresh schedule for the dashboard to ensure it completes before the export starts.\n6. Use the Run now option after completing the next successful refresh to avoid any potential issues with the export process.\n\nBy following these steps, you can identify and resolve the root cause of the export failures and prevent similar issues from occurring in the future. This will help maintain the reliability and accuracy of your data exports. Please review the above steps carefully and adjust them based on the actual findings and requirements of your environment. If you need more detailed guidance or assistance, please let me know. Thank you! To summarize, the next step is to verify the connection refresh timeout settings and investigate any potential causes of the export failures. Once identified, adjust the refresh schedule accordingly to prevent similar issues from recurring. Additionally, consider adjusting the billing actions, ownership disputes, or legal requests to ensure the export process remains smooth. By taking these steps, you can effectively manage and mitigate the risks associated with export failures. Please provide any additional details or context that might be helpful in addressing the specific issue at hand. Thank you for your attention to this matter. I am ready to assist you further. Let's discuss the next steps in detail. How can we proceed with verifying the connection refresh timeout settings and investigating any potential causes of the export failures? To proceed with verifying the connection refresh timeout settings and investigating any potential causes of the export failures, we should first confirm the current status of the connection refresh timeout settings on the dashboard. We can then compare the current value against the threshold of 15 minutes to determine if the setting needs adjustment. Next, we should examine any other relevant factors that could contribute to the failure, such as any errors or warnings related to the export process. Finally, we should confirm whether the scheduled refresh interval for the dashboard is correct and hasn't expired. With this information, we can take appropriate action to prevent similar issues from occurring in the future. Is there anything else you would like to add or clarify regarding the verification process",
+  "sources": [
+    {
+      "source_id": "KB-004",
+      "passage": "- `source_refresh_timeout`: A required connection did not finish refreshing within 15 minutes. The export is not retried automatically.\n- `destination_unverified`: Delivery is blocked until the destination is verified.\n- `owner_access_revoked`: The schedule owner no longer has access to the dashboar",
+      "char_start": 0,
+      "char_end": 371
+    },
+    {
+      "source_id": "CASE-1103",
+      "passage": "Title: Repeated render failures after documented checks\nSymptoms: Two consecutive runs showed render_failed; Dashboard opened successfully; Connections and destination were active\nResolution: Collected workspace ID, dashboard ID, schedule ID, run IDs and timestamps; Escalated to the Rendering team w",
+      "char_start": 0,
+      "char_end": 339
+    },
+    {
+      "source_id": "KB-008",
+      "passage": "- Two consecutive `render_failed` events for the same dashboard after documented checks\n- Two repeated `connector_internal_error` failures\n- Suspected credential exposure\n- Billing actions, ownership disputes or legal requests\n- A reproducible error not described in the current knowledge base",
+      "char_start": 0,
+      "char_end": 293
+    },
+    {
+      "source_id": "CASE-1072",
+      "passage": "Title: Export failed while a connection refresh was still running\nSymptoms: Run history showed source_refresh_timeout; Connection refresh completed 19 minutes after the export start time\nResolution: Confirmed that exports wait up to 15 minutes for required refreshes; Admin adjusted the refresh sched",
+      "char_start": 0,
+      "char_end": 389
+    }
+  ],
+  "confidence": 0.019736842105263157,
+  "requires_human": true,
+  "reason": "Query indicates two consecutive render_failed events (matched: 'Two export runs in a row failed with render_failed'). Per KB-004 and KB-008, this meets the escalation threshold.",
+  "clarifying_question": null,
+  "escalation_reason": "Query indicates two consecutive render_failed events (matched: 'Two export runs in a row failed with render_failed'). Per KB-004 and KB-008, this meets the escalation threshold.",
+  "warnings": [
+    "Answer did not fully pass verification (overlap_score=0.02). Returned with reduced confidence."
+  ],
+  "node_trace": [
+    "triage",
+    "retrieval",
+    "generation",
+    "verification",
+    "generation",
+    "verification",
+    "finalise"
+  ],
+  "attempt_count": 2,
+  "wall_clock_s": 252.49
+}

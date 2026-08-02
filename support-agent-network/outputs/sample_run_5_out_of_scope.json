@@ -1,0 +1,17 @@
+{
+  "classification": "out_of_scope",
+  "answer": "This request is outside the scope of OrbitDesk support. OrbitDesk support can explain product behaviour, provide documented troubleshooting steps, and recommend escalation. It cannot issue refunds, provide legal or financial advice, cancel subscriptions, or perform actions outside the product documentation. (Query matches out-of-scope pattern '\\brefund\\b' (matched: 'refund'). Per KB-010, this is outside the OrbitDesk support scope.)",
+  "sources": [],
+  "confidence": 0.0,
+  "requires_human": false,
+  "reason": "Query matches out-of-scope pattern '\\brefund\\b' (matched: 'refund'). Per KB-010, this is outside the OrbitDesk support scope.",
+  "clarifying_question": null,
+  "escalation_reason": null,
+  "warnings": [],
+  "node_trace": [
+    "triage",
+    "finalise"
+  ],
+  "attempt_count": 0,
+  "wall_clock_s": 0.01
+}

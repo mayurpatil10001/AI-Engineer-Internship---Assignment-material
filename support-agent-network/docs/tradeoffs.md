@@ -95,19 +95,23 @@ non-superseded evidence corpus. Threshold: 20%. Supplemented by a fabrication ra
   — for evidence-constrained generation with a small model following a strict prompt, trigram
   overlap is a reasonable first-order proxy.
 
-**Threshold calibration:** After observing demo run behavior, thresholds were set to:
-- `OVERLAP_THRESHOLD = 0.05` (trigram recall): Very low because 0.5B models paraphrase evidence
-  rather than quoting it. A trigram from a 0.5B answer rarely matches the source verbatim.
-  This threshold still catches completely fabricated answers that share no vocabulary with evidence.
-- `FABRICATION_THRESHOLD = 0.60` (key-term absence): The primary grounding check. A well-grounded
-  answer should have <60% of its key terms absent from evidence. True hallucinations (invented
-  product names, made-up error codes) typically push this above 60%.
+**Threshold calibration (actual values — verify against `verification.py` constants):**
+- `OVERLAP_THRESHOLD = 0.0` (trigram recall threshold is **disabled**): The threshold is set to 0.0,
+  meaning the trigram-overlap check is a no-op — any non-negative overlap score passes. This was
+  calibrated to 0.0 because 0.5B models heavily paraphrase evidence rather than quoting it, so
+  trigram overlap is near zero even for well-grounded answers. The check is retained in code as a
+  hook (it can be re-enabled by raising the threshold) but currently contributes no filtering.
+  Grounding enforcement relies entirely on `FABRICATION_THRESHOLD` below.
+- `FABRICATION_THRESHOLD = 0.55` (key-term absence): The **active** grounding check. If more than
+  55% of the answer's key terms are absent from the evidence, the answer fails verification.
+  Calibrated at 0.55: well-grounded paraphrase-style answers score below this; truly hallucinated
+  answers (invented error codes, made-up step names) typically exceed it.
 
-**Known limitation (explicitly acknowledged in README):** Trigram overlap does not detect
-paraphrase-level hallucinations. A model that correctly paraphrases evidence passes; one that
-invents plausible-sounding but wrong details in syntactically similar phrasing may also pass.
-The fabrication ratio check provides a secondary signal but is also bypassable by an adversarial
-model. This is the primary known limitation of the verification implementation.
+**Known limitation (explicitly acknowledged in README):** Because trigram overlap is currently
+disabled (`OVERLAP_THRESHOLD = 0.0`), the only active grounding signal is the fabrication ratio.
+A model that invents plausible-sounding details using terms that happen to appear in the evidence
+can bypass verification. A neural NLI model would provide a stronger guarantee.
+See also `docs/tradeoffs.md §T-9` for the finalise demotion policy that operates on top of this.
 
 ---
 

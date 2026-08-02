@@ -1,3 +1,10 @@
+# Defensive backend guard — must come before ANY transformers/torch import.
+# Prevents TensorFlow collision if a reviewer has TF installed for an unrelated project.
+# (This is exactly the tf_keras/Keras-3 traceback that appeared in test-machine logs.)
+import os
+os.environ.setdefault("USE_TF", "0")
+os.environ.setdefault("USE_TORCH", "1")
+
 """
 Centralised local model loading with caching and load-time timing.
 
@@ -19,7 +26,6 @@ See docs/design.md §7 for hardware-aware justification of these choices.
 from __future__ import annotations
 
 import logging
-import os
 import time
 from dataclasses import dataclass, field
 from typing import Optional
