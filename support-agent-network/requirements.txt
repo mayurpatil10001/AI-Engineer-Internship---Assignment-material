@@ -1,0 +1,47 @@
+# OrbitDesk Support Agent Network — pinned dependencies
+# Python 3.11 required
+# Install with: pip install -r requirements.txt
+#
+# Model downloads happen on first run; after that HF_HUB_OFFLINE=1 is enforced.
+# No hosted-LLM API packages are listed here (openai, anthropic, cohere, etc.)
+
+# ── Graph orchestration ──────────────────────────────────────────────────────
+langgraph==0.2.55
+langchain-core==0.3.25
+
+# ── Local HuggingFace inference ──────────────────────────────────────────────
+transformers==4.47.1
+sentence-transformers==3.3.1
+# torch: CPU-only wheel; swap for cu121 wheel if GPU available
+torch==2.5.1
+tokenizers==0.21.0
+huggingface-hub==0.27.1
+accelerate==1.2.1
+# bitsandbytes: optional 8-bit quantisation on CUDA; fails gracefully on CPU
+bitsandbytes==0.45.0
+
+# ── Vector search (local, embedded — no managed DB) ─────────────────────────
+numpy==2.1.3
+
+# ── Schema validation ────────────────────────────────────────────────────────
+pydantic==2.10.3
+
+# ── Structured logging ───────────────────────────────────────────────────────
+python-json-logger==2.0.7
+
+# ── CLI ──────────────────────────────────────────────────────────────────────
+click==8.1.8
+rich==13.9.4
+
+# ── Testing ──────────────────────────────────────────────────────────────────
+pytest==8.3.4
+pytest-timeout==2.3.1
+
+# ── Graph diagram generation ─────────────────────────────────────────────────
+# LangGraph uses mermaid-js; we render PNG via playwright or pillow+cairosvg
+# Using a pure-Python fallback (graphviz text → PNG via matplotlib)
+matplotlib==3.10.0
+networkx==3.4.2
+
+# ── Utilities ────────────────────────────────────────────────────────────────
+python-dotenv==1.0.1
