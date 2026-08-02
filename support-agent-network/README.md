@@ -109,7 +109,7 @@ via cosine similarity to hand-written class exemplars. See [`docs/tradeoffs.md �
 | **73-chunk index build** | ~0.13 s per run (numpy cosine scan) |
 | **5/5 benchmark cases** | All correct classifications on first full run |
 
-> ⚠️ **Note on generation latency:** ~120 s/call for a 0.5B model on an RTX 2050 (even at int8)
+> **Note on generation latency:** ~120 s/call for a 0.5B model on an RTX 2050 (even at int8)
 > is unexpectedly high — likely attributable to CPU↔GPU data-transfer overhead with 8-bit
 > quantization on a low-VRAM mobile GPU, rather than true compute cost. With more time this
 > would be the first thing profiled and optimised (GGUF via `llama-cpp-python` or full fp16
